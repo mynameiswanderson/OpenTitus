@@ -127,6 +127,13 @@ pub fn window_init() !void {
         renderer = null;
     }
 
+    //
+    // Setting vSync to solve screen stuttering and micro-jittery on MacOS
+    // Why? The Metal vs. OpenGL Conflict
+    // SDL3 defaults to the best available renderer. On macOS, this is Metal. If you are accidentally forcing OpenGL or if SDL_RENDERER_PRESENTVSYNC isn't set correctly, you'll get screen tearing or "micro-stutter."
+    //
+    _ = SDL.setRenderVSync(renderer, 1);
+
     const pixelFormat = SDL.getWindowPixelFormat(window);
     screen = SDL.createSurface(game_width, game_height, pixelFormat);
     if (screen == null) {

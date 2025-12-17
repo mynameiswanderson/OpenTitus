@@ -322,6 +322,7 @@ pub const getWindowPixelFormat = This.SDL_GetWindowPixelFormat;
 pub const setWindowIcon = This.SDL_SetWindowIcon;
 
 pub const createRenderer = This.SDL_CreateRenderer;
+pub const setRenderVSync = This.SDL_SetRenderVSync;
 pub const destroyRenderer = This.SDL_DestroyRenderer;
 
 pub const LOGICAL_PRESENTATION_LETTERBOX = This.SDL_LOGICAL_PRESENTATION_LETTERBOX;
