@@ -168,7 +168,6 @@ pub const SpriteCache = struct {
 
         const orig_pixels = @as([*]i8, @ptrCast(original.pixels));
         const pitch: usize = @intCast(original.pitch);
-        const w: usize = @intCast(original.w);
         const h: usize = @intCast(original.h);
 
         var dest_pixels = @as([*]i8, @ptrCast(surface.*.pixels));
@@ -185,14 +184,12 @@ pub const SpriteCache = struct {
         }
 
         if (flash) {
-            // TODO: add support for other pixel formats
-            for (0..w * h) |i| {
-                // 0: Transparent
-                if (dest_pixels[i] != 0) {
-                    dest_pixels[i] = dest_pixels[i] & 0x01;
-                }
-            }
+            // Set the surface to 50% transparency (128 out of 255)
+            _ = SDL.setSurfaceAlphaMod(surface, 128);
+            // Also use SDL_BLENDMODE_BLEND to ensure it renders correctly
+            _ = SDL.setSurfaceBlendMode(surface, SDL.BLENDMODE_BLEND);
         }
+
         return try SDL.convertSurface(surface, self.pixelformat);
     }
 
@@ -205,9 +202,9 @@ pub const SpriteCache = struct {
         const new_surface = try copysurface(self, spritedata, key.flip, key.flash);
         try self.hashmap.put(key, new_surface);
 
-        if(debug.dump_sprites) {
+        if (debug.dump_sprites) {
             var buf: [64]u8 = undefined;
-            const filename = try std.fmt.bufPrint(&buf,"sprite_{d}_{}_{}.bmp\x00", .{key.number, key.flash, key.flip});
+            const filename = try std.fmt.bufPrint(&buf, "sprite_{d}_{}_{}.bmp\x00", .{ key.number, key.flash, key.flip });
             if (!SDL.saveBMP(new_surface, &filename[0])) {
                 return error.DumpError;
             }
